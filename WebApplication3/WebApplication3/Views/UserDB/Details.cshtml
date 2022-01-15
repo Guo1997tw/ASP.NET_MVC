@@ -1,0 +1,77 @@
+﻿@model WebApplication3.Models.UserTable
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>UserTable</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(m => m.UserName) <br />
+                @Html.Label("使用者名稱 (1) (UserName)") <br />
+                @Html.LabelFor(m => m.UserName, "使用者名稱 (2) (UserName)") <br />
+            </dt>
+    
+            <dd>
+                <font color="red"> @Html.DisplayFor(m => m.UserName) </font> <br />
+                <font color ="blue"> @Model.UserName </font> <br /> <br />
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(m => m.UserSex)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(m => m.UserSex) <br /> <br />
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(m => m.UserBirthDay)
+            </dt>
+    
+            <dd>
+                (1) <br />
+                @Html.DisplayFor(m => m.UserBirthDay) <br /> <br />
+
+                (2) <br />
+                <font color="green">@Html.DisplayFor(m => m.UserBirthDay, "0:yyyy/MM/dd") </font> <br /> <br />
+
+                (3) 使用ToString <br />
+                <font color="purple"> @String.Format("{0:yyyy/MM/dd}", Model.UserBirthDay.ToString()) </font> <br /> <br />
+
+                (4) 使用ToString <br />
+                <font color="orange"> @String.Format("{0:yyyy/MM/dd}", Model.UserBirthDay) </font> <br /> <br />
+
+                (5) 使用Convert，顯示長日期<br />
+                <font color="yellow"> @Convert.ToDateTime(Model.UserBirthDay).ToLongDateString() </font> <br /> <br />
+
+                (6) 使用Convert，顯示短日期<br />
+                <font color="pink"> @Convert.ToDateTime(Model.UserBirthDay).ToShortDateString() </font> <br /> <br />
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(m => m.UserMobilePhone)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(m => m.UserMobilePhone)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("編輯", "Edit", new { _ID = Model.UserId })
+        @Html.ActionLink("返回", "List")
+    </p>
+</body>
+</html>

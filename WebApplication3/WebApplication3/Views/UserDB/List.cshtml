@@ -1,0 +1,68 @@
+﻿@*IEnumerable為集合呈現*@
+@model IEnumerable<WebApplication3.Models.UserTable>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>List</title>
+</head>
+<body>
+    <p>
+        @Html.ActionLink("新增", "Create")
+    </p>
+    @*border為表格框線引用*@
+    <table class="table" border="1">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(m => m.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.UserSex)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.UserBirthDay)
+            </th>
+            <th>
+                @Html.DisplayNameFor(m => m.UserMobilePhone)
+            </th>
+            <th></th>
+        </tr>
+
+        @*model代表為引用宣告、Model代表為值*@
+        @foreach (var item in Model)
+        {
+            <tr> @*tr = Table Row，定義為Row (橫列)*@
+
+                <td> @*td = Table Data，定義為Cloumn (直行)*@
+                    @Html.DisplayFor(modelItem => item.UserName) @*有For為Lambda寫法，稱強型別*@
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserSex)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserBirthDay)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserMobilePhone)
+                </td>
+
+                <td>
+                    @Html.ActionLink("編輯", "Edit", new { _ID = item.UserId }) |
+                    @Html.ActionLink("明細", "Details", new { _ID = item.UserId }) |
+                    @Html.ActionLink("刪除", "Delete", new { _ID = item.UserId })
+                </td>
+            </tr>
+        }
+
+    </table>
+</body>
+</html>
