@@ -30,14 +30,18 @@
     
             <div class="form-group">
                 @Html.LabelFor(m => m.UserSex, htmlAttributes: new { @class = "control-label col-md-2" })
+                <font color="red">(範例：男性 = M、女性 = F。)</font>
                 <div class="col-md-10">
                     @Html.EditorFor(m => m.UserSex, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(m => m.UserSex, "", new { @class = "text-danger" })
                 </div>
             </div>
+            @*下拉式選單寫法*@
+            @*<select><option value="男性">M</option><option value="女性">F</option></select>*@
     
             <div class="form-group">
                 @Html.LabelFor(m => m.UserBirthDay, htmlAttributes: new { @class = "control-label col-md-2" })
+                <font color="red">(範例：XXXX/XX/XX)</font>
                 <div class="col-md-10">
                     @Html.EditorFor(m => m.UserBirthDay, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(m => m.UserBirthDay, "", new { @class = "text-danger" })
@@ -46,6 +50,7 @@
     
             <div class="form-group">
                 @Html.LabelFor(m => m.UserMobilePhone, htmlAttributes: new { @class = "control-label col-md-2" })
+                <font color="red">(範例：09XXXXXXXX)</font>
                 <div class="col-md-10">
                     @Html.EditorFor(m => m.UserMobilePhone, new { htmlAttributes = new { @class = "form-control" } })
                     @Html.ValidationMessageFor(m => m.UserMobilePhone, "", new { @class = "text-danger" })

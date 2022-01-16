@@ -17,8 +17,20 @@ namespace WebApplication3.Controllers
         //原本寫的virtual => override (可覆蓋)。
         protected override void Dispose(bool disposing)
         {
-            if (disposing) {_db.Dispose();}
+            if (disposing) { _db.Dispose(); }
             base.Dispose(disposing);
+        }
+
+        //CheckSex變數 (判斷M or F的欄位)。
+        private bool CheckSex(string sex)
+        {
+            return sex == "M" || sex == "F";
+        }
+
+        //CheckMobilePhone (判斷開頭是否為09及後面為8碼)。
+        private bool CheckMobilePhone(string MobilePhone)
+        {
+            return System.Text.RegularExpressions.Regex.IsMatch(MobilePhone, @"09[0-9]{8}$");
         }
 
         // GET: UserDB
@@ -52,8 +64,8 @@ namespace WebApplication3.Controllers
 
         [HttpGet]
 
-        //主表明細功能 (Master Details)
-        public ActionResult Details(int? _ID = 1)
+        //明細功能 (Details)
+        public ActionResult Details(int? _ID)
         {
             //如果沒有在網頁的URL上方輸入ID話，則會報出Error。
             if (_ID == null)
@@ -90,8 +102,18 @@ namespace WebApplication3.Controllers
         //新增時，需傳入整張Table。
         public ActionResult CreateConfirm(UserTable _userTable)
         {
+
             //如果userTable不等於空值及表單驗證話，則會將該筆資料寫入資料庫。否則會報出Error。
-            if ((_userTable != null) && (ModelState.IsValid))
+            //if (((_userTable != null) && (ModelState.IsValid)) && ((_userTable.UserSex == "M") || (_userTable.UserSex == "F")))
+            //{
+            //    _db.UserTables.Add(_userTable);
+            //    _db.SaveChanges();
+
+            //    //當新增完成一筆資料後，則畫面將返回主表(Master)。
+            //    return RedirectToAction("List");
+            //}
+
+            if (((_userTable != null) && (ModelState.IsValid)) && this.CheckSex(_userTable.UserSex) && this.CheckMobilePhone(_userTable.UserMobilePhone))
             {
                 _db.UserTables.Add(_userTable);
                 _db.SaveChanges();
@@ -99,12 +121,13 @@ namespace WebApplication3.Controllers
                 //當新增完成一筆資料後，則畫面將返回主表 (Master)。
                 return RedirectToAction("List");
             }
-            else
-            {
-                ModelState.AddModelError("Value1", "訊息錯誤");
+            //else
+            //{
+            //    ModelState.AddModelError("Value1", "訊息錯誤");
 
-                return View();
-            }
+            //    return View();
+            //}
+            return Content("欄位有誤！請返回上一頁並重新填寫。");
         }
 
         //刪除功能 (檢視畫面)。
@@ -157,14 +180,14 @@ namespace WebApplication3.Controllers
         public ActionResult Edit(int? _ID)
         {
             //如果沒有在網頁的URL上方輸入ID話，則會報出Error。
-            if (_ID == null) {return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);}
+            if (_ID == null) { return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest); }
 
             //先鎖定輸入的ID。
             UserTable ut = _db.UserTables.Find(_ID);
 
             //如果輸入的ID沒有話，會報出Error。否則，將顯示出來。
-            if (ut == null) {return HttpNotFound();}
-            else {return View(ut);}
+            if (ut == null) { return HttpNotFound(); }
+            else { return View(ut); }
         }
 
         [HttpPost]
@@ -172,23 +195,34 @@ namespace WebApplication3.Controllers
 
         //白名單：可以輸出需要顯示的欄位。
         //黑名單：可以輸出不需要顯示的欄位。
-        public ActionResult Edit([Bind(Include = "UserId, UserName, UserSex, UserBirthDay, UserMobilePhone")]UserTable _userTable)
+        public ActionResult Edit([Bind(Include = "UserId, UserName, UserSex, UserBirthDay, UserMobilePhone")] UserTable _userTable)
         {
             //如果輸入ID沒有內容話，則會報出Error。
-            if(_userTable == null) {return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest);}
+            if (_userTable == null) { return new HttpStatusCodeResult(System.Net.HttpStatusCode.BadRequest); }
+
+            //if(_userTable.UserSex != "M" || _userTable.UserSex != "F")
+            //{
+            //    return Content("Error");
+            //}
+
+            //if (this.CheckSex(_userTable.UserSex) && this.CheckMobilePhone(_userTable.UserMobilePhone))
+            //{
+            //    return Content("欄位有誤！請返回上一頁並重新填寫。");
+            //}
 
             //透過表單驗證，需搭配Models底下的類別檔。
-            if(ModelState.IsValid)
+            if (ModelState.IsValid && this.CheckSex(_userTable.UserSex) && this.CheckMobilePhone(_userTable.UserMobilePhone))
             {
                 _db.Entry(_userTable).State = System.Data.Entity.EntityState.Modified;
                 _db.SaveChanges();
 
                 return RedirectToAction("List");
             }
-            else
-            {
-                return View(_userTable);
-            }
+            //else
+            //{
+            //    return View(_userTable);
+            //}
+            return Content("欄位有誤！請返回上一頁並重新填寫。");
         }
 
         //搜尋功能。
@@ -236,11 +270,11 @@ namespace WebApplication3.Controllers
             var ListAll = _db.UserTables.Select(s => s);
 
             //搜尋條件一
-            if(!string.IsNullOrWhiteSpace(uName))
+            if (!string.IsNullOrWhiteSpace(uName))
             {
                 //使用指定的值搜尋。
                 //ListAll = ListAll.Where(s => s.UserName == uName);
-                
+
                 //使用模糊搜尋。
                 ListAll = ListAll.Where(s => s.UserName.Contains(uName));
             }
@@ -255,7 +289,7 @@ namespace WebApplication3.Controllers
                 ListAll = ListAll.Where(s => s.UserMobilePhone.Contains(uUserMobilePhone));
             }
 
-            if((_userTable != null) && (ModelState.IsValid))
+            if ((_userTable != null) && (ModelState.IsValid))
             {
                 return View("SearchMultiResult", ListAll.ToList());
             }
@@ -266,7 +300,7 @@ namespace WebApplication3.Controllers
         }
 
         //分頁功能
-        public ActionResult Page(int _ID=1)
+        public ActionResult Page(int _ID = 1)
         {
             //網站此頁為5筆資料呈現。
             int PageSize = 5;
@@ -274,7 +308,7 @@ namespace WebApplication3.Controllers
             //目前網站此頁觀賞為第幾頁。
             int NowPageCount = 0;
 
-            if(_ID > 0)
+            if (_ID > 0)
             {
                 //(選擇想要看的頁數-1) * 一頁所呈現的資料筆數
                 NowPageCount = (int)((_ID - 1) * PageSize);
@@ -283,7 +317,7 @@ namespace WebApplication3.Controllers
             //Skip -> 從哪分頁開始，Take -> 呈現此頁面有幾筆資料。
             var ListAll = (from _userTable in _db.UserTables orderby _userTable.UserId select _userTable).Skip(NowPageCount).Take(PageSize);
 
-            if(ListAll == null)
+            if (ListAll == null)
             {
                 return HttpNotFound();
             }
