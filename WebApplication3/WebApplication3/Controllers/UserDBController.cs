@@ -30,7 +30,10 @@ namespace WebApplication3.Controllers
         //CheckMobilePhone (判斷開頭是否為09及後面為8碼)。
         private bool CheckMobilePhone(string MobilePhone)
         {
-            return System.Text.RegularExpressions.Regex.IsMatch(MobilePhone, @"09[0-9]{8}$");
+            //$數字結尾意思。
+            //e.g. 電話號碼結尾 or 身份證結尾。
+            //return System.Text.RegularExpressions.Regex.IsMatch(MobilePhone, @"09[0-9]{8}$");
+            return System.Text.RegularExpressions.Regex.IsMatch(MobilePhone, @"09\d{8}$");
         }
 
         // GET: UserDB
